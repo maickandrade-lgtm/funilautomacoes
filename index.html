@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estratégia de Funis Conectados - Dashboard Completo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        
+        /* Header Principal */
+        .main-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 3rem 2rem 2rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .main-header h1 { 
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .main-header .subtitle {
+            color: rgba(255,255,255,0.65);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Sistema de Abas */
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+        
+        .tabs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .tabs-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .tabs-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        .tab-button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-button:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #0f172a;
+            border-color: white;
+            font-weight: 600;
+        }
+        
+        .tab-icon {
+            font-size: 1.125rem;
+        }
+        
+        .tab-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .tab-button.active .tab-number {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* Conteúdo das Abas */
+        .content-wrapper {
+            background: white;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Frame para conteúdo externo */
+        .content-frame {
+            width: 100%;
+            border: none;
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #64748b;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f1f5f9;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .footer p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.875rem;
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 2rem 1rem 1.5rem;
+            }
+            
+            .main-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-header">
+        <div class="header-content">
+            <h1>Estratégia de Funis Conectados</h1>
+            <p class="subtitle">Sistema completo de captação, qualificação e conversão baseado em diagnóstico empresarial</p>
+            
+            <div class="tabs-container">
+                <button class="tab-button active" onclick="switchTab('arquitetura')">
+                    <span class="tab-number">01</span>
+                    <span>Arquitetura Geral</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('qualificacao')">
+                    <span class="tab-number">02</span>
+                    <span>Fluxo de Qualificação</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('matriz')">
+                    <span class="tab-number">03</span>
+                    <span>Matriz de Personalização</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('nutricao')">
+                    <span class="tab-number">04</span>
+                    <span>Funil de Nutrição</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('jornada')">
+                    <span class="tab-number">05</span>
+                    <span>Jornada Completa</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-wrapper">
+        <div id="arquitetura" class="tab-content active">
+            <iframe src="01-arquitetura-geral.html" class="content-frame" id="frame-arquitetura"></iframe>
+        </div>
+        
+        <div id="qualificacao" class="tab-content">
+            <iframe src="02-fluxo-qualificacao.html" class="content-frame" id="frame-qualificacao"></iframe>
+        </div>
+        
+        <div id="matriz" class="tab-content">
+            <iframe src="03-matriz-personalizacao.html" class="content-frame" id="frame-matriz"></iframe>
+        </div>
+        
+        <div id="nutricao" class="tab-content">
+            <iframe src="04-funil-nutricao.html" class="content-frame" id="frame-nutricao"></iframe>
+        </div>
+        
+        <div id="jornada" class="tab-content">
+            <iframe src="05-jornada-completa.html" class="content-frame" id="frame-jornada"></iframe>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Sistema de Funis Conectados | Estratégia de Crescimento Empresarial</p>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Remove active de todos os botões e conteúdos
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Ativa o botão clicado
+            event.target.closest('.tab-button').classList.add('active');
+            
+            // Ativa o conteúdo correspondente
+            document.getElementById(tabName).classList.add('active');
+            
+            // Ajusta altura do iframe
+            const frame = document.querySelector(`#${tabName} iframe`);
+            if (frame) {
+                frame.style.minHeight = '800px';
+            }
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Ajusta altura dos iframes quando carregam
+        document.addEventListener('DOMContentLoaded', function() {
+            const frames = document.querySelectorAll('.content-frame');
+            frames.forEach(frame => {
+                frame.addEventListener('load', function() {
+                    try {
+                        const contentHeight = this.contentWindow.document.body.scrollHeight;
+                        this.style.height = contentHeight + 'px';
+                    } catch(e) {
+                        this.style.minHeight = '1000px';
+                    }
+                });
+            });
+        });
+        
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey) {
+                const tabs = ['arquitetura', 'qualificacao', 'matriz', 'nutricao', 'jornada'];
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= 5) {
+                    const buttons = document.querySelectorAll('.tab-button');
+                    buttons[num - 1].click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

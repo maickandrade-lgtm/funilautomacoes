@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de Personalização</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #1e293b;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 4rem 2rem;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header h1 { 
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .header .subtitle {
+            color: rgba(255,255,255,0.65);
+            font-size: 1.125rem;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 4rem 3rem;
+        }
+        
+        .matrix-wrapper {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .matrix {
+            min-width: 1200px;
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+        }
+        
+        .matrix th {
+            background: #0f172a;
+            color: white;
+            padding: 1.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid #1e293b;
+        }
+        
+        .matrix th:first-child {
+            background: #1e293b;
+        }
+        
+        .pilar-header {
+            background: #334155 !important;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            padding: 1.25rem 1rem;
+            border: 1px solid #475569;
+        }
+        
+        .matrix td {
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .matrix td:hover {
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        
+        .cell-title {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+        }
+        
+        .cell-content {
+            color: #64748b;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+        }
+        
+        .content-tag {
+            display: inline-block;
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            margin-right: 0.375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .tag-ebook { background: #dbeafe; color: #1e40af; }
+        .tag-video { background: #fce7f3; color: #9f1239; }
+        .tag-workshop { background: #fef3c7; color: #92400e; }
+        .tag-evento { background: #d1fae5; color: #065f46; }
+        
+        .faixa-1-cell { border-left: 4px solid #ef4444; }
+        .faixa-2-cell { border-left: 4px solid #f59e0b; }
+        .faixa-3-cell { border-left: 4px solid #eab308; }
+        .faixa-4-cell { border-left: 4px solid #3b82f6; }
+        .faixa-5-cell { border-left: 4px solid #10b981; }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .legend-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .legend-text {
+            flex: 1;
+        }
+        
+        .legend-text strong {
+            display: block;
+            color: #0f172a;
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .legend-text span {
+            color: #64748b;
+            font-size: 0.8125rem;
+        }
+        
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #06b6d4;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 3rem;
+        }
+        
+        .info-panel h3 {
+            color: #0f172a;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .info-item {
+            color: #475569;
+            line-height: 1.7;
+        }
+        
+        .info-item strong {
+            color: #0f172a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Matriz de Personalização</h1>
+            <p class="subtitle">25 combinações únicas de conteúdo: 5 Pilares × 5 Faixas de Maturidade</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="matrix-wrapper">
+            <table class="matrix">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">Pilar / Faixa</th>
+                        <th>Faixa 1 (0-30)</th>
+                        <th>Faixa 2 (31-50)</th>
+                        <th>Faixa 3 (51-85)</th>
+                        <th>Faixa 4 (86-94)</th>
+                        <th>Faixa 5 (95-100)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- CULTURA -->
+                    <tr>
+                        <td class="pilar-header">CULTURA</td>
+                        <td class="faixa-1-cell">
+                            <div class="cell-title">Construindo Identidade</div>
+                            <div class="cell-content">Ebook: "Definindo Valores que Importam"<br>Vídeo: "Propósito para Pequenas Empresas"</div>
+                            <span class="content-tag tag-ebook">Ebook</span>
+                            <span class="content-tag tag-video">Vídeo</span>
+                        </td>
+                        <td class="faixa-2-cell">
+                            <div class="cell-title">Vivendo os Valores</div>
+                            <div class="cell-content">Workshop: "Transformando Cultura em Hábito"<br>Checklist: Rituais Culturais</div>
+                            <span class="content-tag tag-workshop">Workshop</span>
+                        </td>
+                        <td class="faixa-3-cell">
+                            <div class="cell-title">Cultura de Performance</div>
+                            <div class="cell-content">Guia: "Alinhando Cultura e Resultados"<br>Evento: Imersão Cultural</div>
+                            <span class="content-tag tag-evento">Evento</span>
+                        </td>
+                        <td class="faixa-4-cell">
+                            <div class="cell-title">Cultura Institucional</div>
+                            <div class="cell-content">Mentoria: "Perpetuando Cultura em Escala"<br>Framework de Alta Performance</div>
+                            <span class="content-tag tag-workshop">Mentoria</span>
+                        </td>
+                        <td class="faixa-5-cell">
+                            <div class="cell-title">Legado Cultural</div>
+                            <div class="cell-content">Masterclass: "Cultura como Ativo Estratégico"<br>Case Study: Empresas Centenárias</div>
+                            <span class="content-tag tag-evento">Masterclass</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- ORGANIZAÇÃO -->
+                    <tr>
+                        <td class="pilar-header">ORGANIZAÇÃO</td>
+                        <td class="faixa-1-cell">
+                            <div class="cell-title">Organizando o Caos</div>
+                            <div class="cell-content">Ebook: "7 Processos Essenciais"<br>Template: Checklists Operacionais</div>
+                            <span class="content-tag tag-ebook">Ebook</span>
+                        </td>
+                        <td class="faixa-2-cell">
+                            <div class="cell-title">Padronização</div>
+                            <div class="cell-content">Workshop: "Criando Processos"<br>Software: Templates de Documentação</div>
+                            <span class="content-tag tag-workshop">Workshop</span>
+                        </td>
+                        <td class="faixa-3-cell">
+                            <div class="cell-title">Excelência Operacional</div>
+                            <div class="cell-content">Curso: "Gestão por KPIs"<br>Dashboard de Acompanhamento</div>
+                            <span class="content-tag tag-video">Curso</span>
+                        </td>
+                        <td class="faixa-4-cell">
+                            <div class="cell-title">Automação Estratégica</div>
+                            <div class="cell-content">Consultoria: "Processos para Automação"<br>Tech Stack de Gestão</div>
+                            <span class="content-tag tag-workshop">Consultoria</span>
+                        </td>
+                        <td class="faixa-5-cell">
+                            <div class="cell-title">Classe Mundial</div>
+                            <div class="cell-content">Benchmarking: "Melhores Práticas Globais"<br>Certificação: Excelência</div>
+                            <span class="content-tag tag-evento">Benchmarking</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- FINANCEIRO -->
+                    <tr>
+                        <td class="pilar-header">FINANCEIRO</td>
+                        <td class="faixa-1-cell">
+                            <div class="cell-title">Controle Básico</div>
+                            <div class="cell-content">Ebook: "Finanças em 30 Dias"<br>Planilha: Fluxo de Caixa Simples</div>
+                            <span class="content-tag tag-ebook">Ebook</span>
+                        </td>
+                        <td class="faixa-2-cell">
+                            <div class="cell-title">Gestão Financeira</div>
+                            <div class="cell-content">Workshop: "DRE na Prática"<br>Curso: Formação de Preços</div>
+                            <span class="content-tag tag-workshop">Workshop</span>
+                        </td>
+                        <td class="faixa-3-cell">
+                            <div class="cell-title">Inteligência Financeira</div>
+                            <div class="cell-content">Curso: "Análise para Decisões"<br>Template: Projeções</div>
+                            <span class="content-tag tag-video">Curso</span>
+                        </td>
+                        <td class="faixa-4-cell">
+                            <div class="cell-title">Planejamento Estratégico</div>
+                            <div class="cell-content">Mentoria: "Estrutura para Crescimento"<br>Modelagem: Valuation</div>
+                            <span class="content-tag tag-workshop">Mentoria</span>
+                        </td>
+                        <td class="faixa-5-cell">
+                            <div class="cell-title">Governança Financeira</div>
+                            <div class="cell-content">Consultoria: "Holding e Sucessão"<br>CFO Advisory</div>
+                            <span class="content-tag tag-evento">Consultoria</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- CRESCIMENTO -->
+                    <tr>
+                        <td class="pilar-header">CRESCIMENTO</td>
+                        <td class="faixa-1-cell">
+                            <div class="cell-title">Primeiras Metas</div>
+                            <div class="cell-content">Ebook: "Metas que Funcionam"<br>Planilha: Plano 90 Dias</div>
+                            <span class="content-tag tag-ebook">Ebook</span>
+                        </td>
+                        <td class="faixa-2-cell">
+                            <div class="cell-title">Crescimento Estruturado</div>
+                            <div class="cell-content">Workshop: "Aquisição de Clientes"<br>Framework: Funil de Vendas</div>
+                            <span class="content-tag tag-workshop">Workshop</span>
+                        </td>
+                        <td class="faixa-3-cell">
+                            <div class="cell-title">Escalabilidade</div>
+                            <div class="cell-content">Curso: "Growth Marketing"<br>Toolkit: CAC, LTV</div>
+                            <span class="content-tag tag-video">Curso</span>
+                        </td>
+                        <td class="faixa-4-cell">
+                            <div class="cell-title">Expansão Estratégica</div>
+                            <div class="cell-content">Consultoria: "Planejamento de Expansão"<br>Roadmap: Novos Mercados</div>
+                            <span class="content-tag tag-workshop">Consultoria</span>
+                        </td>
+                        <td class="faixa-5-cell">
+                            <div class="cell-title">Crescimento Exponencial</div>
+                            <div class="cell-content">Programa: "Scale-Up Intensivo"<br>Network: Parcerias</div>
+                            <span class="content-tag tag-evento">Programa</span>
+                        </td>
+                    </tr>
+                    
+                    <!-- MENTALIDADE -->
+                    <tr>
+                        <td class="pilar-header">MENTALIDADE</td>
+                        <td class="faixa-1-cell">
+                            <div class="cell-title">Mindset de Empresário</div>
+                            <div class="cell-content">Ebook: "Do Executor ao Líder"<br>Vídeo: "Delegação sem Medo"</div>
+                            <span class="content-tag tag-ebook">Ebook</span>
+                            <span class="content-tag tag-video">Vídeo</span>
+                        </td>
+                        <td class="faixa-2-cell">
+                            <div class="cell-title">Liderança Estratégica</div>
+                            <div class="cell-content">Workshop: "Desenvolvendo Liderança"<br>Ferramenta: Matriz de Delegação</div>
+                            <span class="content-tag tag-workshop">Workshop</span>
+                        </td>
+                        <td class="faixa-3-cell">
+                            <div class="cell-title">Visão de Longo Prazo</div>
+                            <div class="cell-content">Curso: "Planejamento Pessoal"<br>Framework: OKRs</div>
+                            <span class="content-tag tag-video">Curso</span>
+                        </td>
+                        <td class="faixa-4-cell">
+                            <div class="cell-title">Líder Transformacional</div>
+                            <div class="cell-content">Mentoria: "Desenvolvendo Lideranças"<br>Programa: Sucessores</div>
+                            <span class="content-tag tag-workshop">Mentoria</span>
+                        </td>
+                        <td class="faixa-5-cell">
+                            <div class="cell-title">Legado Empreendedor</div>
+                            <div class="cell-content">Masterclass: "Construindo Império"<br>Think Tank: Empresários de Elite</div>
+                            <span class="content-tag tag-evento">Masterclass</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="legend-grid">
+            <div class="legend-item">
+                <div class="legend-icon" style="background: #dbeafe; color: #1e40af;">E</div>
+                <div class="legend-text">
+                    <strong>Ebooks</strong>
+                    <span>Conteúdo educacional denso</span>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon" style="background: #fce7f3; color: #9f1239;">V</div>
+                <div class="legend-text">
+                    <strong>Vídeos/Cursos</strong>
+                    <span>Aulas e conteúdo visual</span>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon" style="background: #fef3c7; color: #92400e;">W</div>
+                <div class="legend-text">
+                    <strong>Workshops</strong>
+                    <span>Sessões práticas interativas</span>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon" style="background: #d1fae5; color: #065f46;">EV</div>
+                <div class="legend-text">
+                    <strong>Eventos</strong>
+                    <span>Imersões e networking</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sistema de Valores com Cifrões -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin: 2rem 0;">
+            <h3 style="color: #0f172a; font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem;">Sistema de Valores</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem;">$</div>
+                    <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Entry Level</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">R$ 97 - R$ 297</div>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem;">$$</div>
+                    <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Intermediário</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">R$ 297 - R$ 497</div>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem;">$$$</div>
+                    <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Avançado</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">R$ 497 - R$ 997</div>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">$$$$</div>
+                    <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Premium Baixo</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">R$ 1.000 - R$ 3.000</div>
+                </div>
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;">$$$$$</div>
+                    <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Premium Alto</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">R$ 3.000 - R$ 10.000+</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Sistema de Personalização</h3>
+            <div class="info-grid">
+                <p class="info-item"><strong>1. Identificação do Pilar Crítico:</strong> Sistema identifica automaticamente os pilares com pontuações mais baixas no diagnóstico.</p>
+                <p class="info-item"><strong>2. Classificação da Faixa:</strong> Score total define a faixa de maturidade (1 a 5), determinando a complexidade do conteúdo.</p>
+                <p class="info-item"><strong>3. Seleção de Conteúdo:</strong> Combinação pilar + faixa determina qual material específico será entregue na sequência.</p>
+                <p class="info-item"><strong>4. Sequenciamento Inteligente:</strong> Conteúdos enviados em ordem otimizada para máximo engajamento e conversão.</p>
+                <p class="info-item"><strong>5. Oferta Adequada:</strong> Baseado no faturamento, sistema oferece produtos premium ou downsell compatíveis com capacidade de investimento.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Qualificação Automática</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #1e293b;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 4rem 2rem;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header h1 { 
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .header .subtitle {
+            color: rgba(255,255,255,0.65);
+            font-size: 1.125rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 4rem 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 3rem 0 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .stage {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stage-label {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stage h3 {
+            color: #0f172a;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .data-point {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+        
+        .data-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .data-value {
+            color: #0f172a;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        
+        .faixas-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .faixa-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .faixa-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1);
+        }
+        
+        .faixa-1 { border-color: #ef4444; }
+        .faixa-2 { border-color: #f59e0b; }
+        .faixa-3 { border-color: #eab308; }
+        .faixa-4 { border-color: #3b82f6; }
+        .faixa-5 { border-color: #10b981; }
+        
+        .faixa-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faixa-1 .faixa-number { color: #ef4444; }
+        .faixa-2 .faixa-number { color: #f59e0b; }
+        .faixa-3 .faixa-number { color: #eab308; }
+        .faixa-4 .faixa-number { color: #3b82f6; }
+        .faixa-5 .faixa-number { color: #10b981; }
+        
+        .faixa-range {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .decision-tree {
+            display: grid;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .route-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+        }
+        
+        .route-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        
+        .route-premium {
+            border-left: 6px solid #10b981;
+        }
+        
+        .route-downsell {
+            border-left: 6px solid #f59e0b;
+        }
+        
+        .route-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .route-title {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .route-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge-premium {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-downsell {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .route-content {
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-items {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+        
+        .action-items ul {
+            margin-left: 1.5rem;
+        }
+        
+        .action-items li {
+            margin-bottom: 0.75rem;
+            color: #475569;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: #f8fafc;
+        }
+        
+        th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 0.9375rem;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .tag-premium { background: #d1fae5; color: #065f46; }
+        .tag-downsell { background: #fef3c7; color: #92400e; }
+        .tag-nurture { background: #fce7f3; color: #9f1239; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Fluxo de Qualificação Automática</h1>
+            <p class="subtitle">Sistema de segmentação e roteamento baseado em dados comportamentais e financeiros</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2 class="section-title">Processo de Qualificação</h2>
+        
+        <!-- Fluxograma de Qualificação SVG -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin: 2rem 0;">
+            <svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 1200px; height: auto; display: block; margin: 0 auto;">
+                <defs>
+                    <!-- Gradientes -->
+                    <linearGradient id="gradBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="gradPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="gradGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="gradOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <!-- Sombras -->
+                    <filter id="shadow1">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                        <feOffset dx="0" dy="2" result="offsetblur"/>
+                        <feComponentTransfer>
+                            <feFuncA type="linear" slope="0.2"/>
+                        </feComponentTransfer>
+                        <feMerge>
+                            <feMergeNode/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    
+                    <!-- Marcadores -->
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#3b82f6"/>
+                    </marker>
+                    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#10b981"/>
+                    </marker>
+                    <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#f59e0b"/>
+                    </marker>
+                </defs>
+                
+                <!-- COLETA -->
+                <rect x="440" y="30" width="320" height="85" rx="12" fill="url(#gradBlue)" filter="url(#shadow1)"/>
+                <rect x="440" y="30" width="320" height="85" rx="12" fill="none" stroke="#1e40af" stroke-width="1" opacity="0.3"/>
+                <rect x="455" y="45" width="80" height="24" rx="6" fill="white" opacity="0.2"/>
+                <text x="495" y="62" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white" opacity="0.9">ENTRADA</text>
+                <text x="600" y="72" text-anchor="middle" fill="white" font-family="Inter" font-size="17" font-weight="700" letter-spacing="-0.02em">COLETA DE DADOS</text>
+                <text x="600" y="95" text-anchor="middle" fill="white" font-family="Inter" font-size="11" font-weight="500" opacity="0.85">Diagnóstico empresarial respondido</text>
+                
+                <path d="M 600 115 L 600 160" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arrow)"/>
+                
+                <!-- PROCESSAMENTO -->
+                <rect x="430" y="160" width="340" height="110" rx="12" fill="url(#gradPurple)" filter="url(#shadow1)"/>
+                <rect x="430" y="160" width="340" height="110" rx="12" fill="none" stroke="#6d28d9" stroke-width="1" opacity="0.3"/>
+                <rect x="445" y="175" width="110" height="24" rx="6" fill="white" opacity="0.2"/>
+                <text x="500" y="192" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white" opacity="0.9">PROCESSAMENTO</text>
+                <text x="600" y="212" text-anchor="middle" fill="white" font-family="Inter" font-size="17" font-weight="700" letter-spacing="-0.02em">ANÁLISE AUTOMÁTICA</text>
+                <line x1="450" y1="230" x2="750" y2="230" stroke="white" stroke-width="1" opacity="0.2"/>
+                <text x="470" y="248" text-anchor="start" fill="white" font-family="Inter" font-size="10.5" font-weight="500" opacity="0.9">→ Cálculo do score total (0-100)</text>
+                <text x="470" y="264" text-anchor="start" fill="white" font-family="Inter" font-size="10.5" font-weight="500" opacity="0.9">→ Identificação dos pilares fracos</text>
+                
+                <path d="M 600 270 L 600 315" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow)"/>
+                
+                <!-- DECISÃO 1: Faturamento -->
+                <g filter="url(#shadow1)">
+                    <path d="M 600 315 L 690 380 L 600 445 L 510 380 Z" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+                    <path d="M 600 315 L 690 380 L 600 445 L 510 380 Z" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+                </g>
+                <text x="600" y="372" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#64748b">Faturamento</text>
+                <text x="600" y="390" text-anchor="middle" font-family="Inter" font-size="14" font-weight="700" fill="#0f172a">≥ R$ 100k?</text>
+                
+                <!-- Labels decisão -->
+                <rect x="700" y="367" width="50" height="26" rx="13" fill="#10b981" opacity="0.15"/>
+                <text x="725" y="383" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#059669">SIM</text>
+                
+                <rect x="450" y="367" width="50" height="26" rx="13" fill="#f59e0b" opacity="0.15"/>
+                <text x="475" y="383" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#d97706">NÃO</text>
+                
+                <!-- Setas laterais -->
+                <path d="M 690 380 L 840 380" stroke="#10b981" stroke-width="3" marker-end="url(#arrowGreen)"/>
+                <path d="M 510 380 L 360 380" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrowOrange)"/>
+                
+                <!-- ROTA PREMIUM -->
+                <rect x="840" y="320" width="300" height="120" rx="12" fill="url(#gradGreen)" filter="url(#shadow1)"/>
+                <rect x="840" y="320" width="300" height="120" rx="12" fill="none" stroke="#047857" stroke-width="1" opacity="0.3"/>
+                <rect x="855" y="335" width="70" height="24" rx="6" fill="white" opacity="0.2"/>
+                <text x="890" y="352" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white" opacity="0.9">PREMIUM</text>
+                <text x="990" y="378" text-anchor="middle" fill="white" font-family="Inter" font-size="16" font-weight="700" letter-spacing="-0.02em">ROTA PRINCIPAL</text>
+                <line x1="860" y1="395" x2="1120" y2="395" stroke="white" stroke-width="1" opacity="0.2"/>
+                <text x="880" y="413" text-anchor="start" fill="white" font-family="Inter" font-size="10" font-weight="500" opacity="0.85">Email + CTA personalizado</text>
+                <text x="880" y="428" text-anchor="start" fill="white" font-family="Inter" font-size="10" font-weight="500" opacity="0.85">Reunião Estratégica Individual</text>
+                
+                <!-- ROTA DOWNSELL -->
+                <rect x="60" y="320" width="300" height="120" rx="12" fill="url(#gradOrange)" filter="url(#shadow1)"/>
+                <rect x="60" y="320" width="300" height="120" rx="12" fill="none" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+                <rect x="75" y="335" width="80" height="24" rx="6" fill="white" opacity="0.2"/>
+                <text x="115" y="352" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="white" opacity="0.9">DOWNSELL</text>
+                <text x="210" y="378" text-anchor="middle" fill="white" font-family="Inter" font-size="16" font-weight="700" letter-spacing="-0.02em">ROTA GRADUAL</text>
+                <line x1="80" y1="395" x2="340" y2="395" stroke="white" stroke-width="1" opacity="0.2"/>
+                <text x="100" y="413" text-anchor="start" fill="white" font-family="Inter" font-size="10" font-weight="500" opacity="0.85">Sequência educacional 7 emails</text>
+                <text x="100" y="428" text-anchor="start" fill="white" font-family="Inter" font-size="10" font-weight="500" opacity="0.85">Ofertas R$ 97 - R$ 997</text>
+                
+                <!-- Setas para baixo -->
+                <path d="M 990 440 L 990 490" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+                <path d="M 210 440 L 210 490" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+                
+                <!-- DECISÃO 2: Score Premium -->
+                <g filter="url(#shadow1)">
+                    <path d="M 990 490 L 1060 540 L 990 590 L 920 540 Z" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+                </g>
+                <text x="990" y="538" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#0f172a">Faixa de</text>
+                <text x="990" y="552" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#0f172a">Maturidade</text>
+                
+                <!-- Indicadores de faixas -->
+                <circle cx="1070" cy="520" r="12" fill="#ef4444" opacity="0.8"/>
+                <text x="1070" y="525" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">1</text>
+                
+                <circle cx="1070" cy="545" r="12" fill="#f59e0b" opacity="0.8"/>
+                <text x="1070" y="550" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">2</text>
+                
+                <circle cx="1070" cy="570" r="12" fill="#eab308" opacity="0.8"/>
+                <text x="1070" y="575" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="white">3</text>
+                
+                <text x="1090" y="545" text-anchor="start" font-family="Inter" font-size="9" fill="#64748b">Faixas 4-5</text>
+                
+                <!-- DECISÃO 3: Score Downsell -->
+                <g filter="url(#shadow1)">
+                    <path d="M 210 490 L 280 540 L 210 590 L 140 540 Z" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+                </g>
+                <text x="210" y="538" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#0f172a">Pilares</text>
+                <text x="210" y="552" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#0f172a">Críticos</text>
+                
+                <!-- Setas para resultados -->
+                <path d="M 990 590 L 990 640" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+                <path d="M 210 590 L 210 640" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+                
+                <!-- RESULTADO PREMIUM -->
+                <rect x="840" y="640" width="300" height="130" rx="12" fill="#10b981" opacity="0.08" stroke="#10b981" stroke-width="2" filter="url(#shadow1)"/>
+                <rect x="855" y="655" width="90" height="24" rx="6" fill="#10b981" opacity="0.15"/>
+                <text x="900" y="672" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#059669">RESULTADO</text>
+                <text x="990" y="698" text-anchor="middle" font-family="Inter" font-size="15" font-weight="700" fill="#0f172a">PRODUTO PRINCIPAL</text>
+                <text x="990" y="721" text-anchor="middle" font-family="Inter" font-size="11" font-weight="500" fill="#059669">Mentoria Empresarial Completa</text>
+                <text x="990" y="740" text-anchor="middle" font-family="Inter" font-size="10" font-weight="500" fill="#047857">Taxa conversão: 25-35%</text>
+                <text x="990" y="758" text-anchor="middle" font-family="Inter" font-size="14" font-weight="700" fill="#059669">$$$$$</text>
+                
+                <!-- RESULTADO DOWNSELL -->
+                <rect x="60" y="640" width="300" height="130" rx="12" fill="#f59e0b" opacity="0.08" stroke="#f59e0b" stroke-width="2" filter="url(#shadow1)"/>
+                <rect x="75" y="655" width="90" height="24" rx="6" fill="#f59e0b" opacity="0.15"/>
+                <text x="120" y="672" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#d97706">RESULTADO</text>
+                <text x="210" y="698" text-anchor="middle" font-family="Inter" font-size="15" font-weight="700" fill="#0f172a">PRODUTOS DOWNSELL</text>
+                <text x="210" y="721" text-anchor="middle" font-family="Inter" font-size="11" font-weight="500" fill="#d97706">Eventos, Workshops, Mentorias</text>
+                <text x="210" y="740" text-anchor="middle" font-family="Inter" font-size="10" font-weight="500" fill="#b45309">Taxa conversão: 8-15%</text>
+                <text x="210" y="758" text-anchor="middle" font-family="Inter" font-size="14" font-weight="700" fill="#d97706">$ - $$$</text>
+                
+                <!-- Legenda Faixas -->
+                <rect x="420" y="785" width="360" height="20" rx="10" fill="#f1f5f9"/>
+                <circle cx="445" cy="795" r="6" fill="#ef4444"/>
+                <text x="455" y="799" font-family="Inter" font-size="8" fill="#64748b">F1: 0-30</text>
+                <circle cx="520" cy="795" r="6" fill="#f59e0b"/>
+                <text x="530" y="799" font-family="Inter" font-size="8" fill="#64748b">F2: 31-50</text>
+                <circle cx="605" cy="795" r="6" fill="#eab308"/>
+                <text x="615" y="799" font-family="Inter" font-size="8" fill="#64748b">F3: 51-85</text>
+                <circle cx="690" cy="795" r="6" fill="#3b82f6"/>
+                <text x="700" y="799" font-family="Inter" font-size="8" fill="#64748b">F4: 86-94</text>
+                <circle cx="755" cy="795" r="6" fill="#10b981"/>
+                <text x="765" y="799" font-family="Inter" font-size="8" fill="#64748b">F5: 95-100</text>
+            </svg>
+        </div>
+        
+        <!-- Etapa 1 -->
+        <div class="stage">
+            <span class="stage-label">Etapa 1</span>
+            <h3>Coleta de Dados no Diagnóstico</h3>
+            <div class="stage-grid">
+                <div class="data-point">
+                    <div class="data-label">Score Total</div>
+                    <div class="data-value">Soma dos 5 pilares (0-100 pontos)</div>
+                </div>
+                <div class="data-point">
+                    <div class="data-label">Score por Pilar</div>
+                    <div class="data-value">Pontuação individual em cada dimensão</div>
+                </div>
+                <div class="data-point">
+                    <div class="data-label">Faturamento Mensal</div>
+                    <div class="data-value">Informação explícita coletada</div>
+                </div>
+                <div class="data-point">
+                    <div class="data-label">Faixa de Maturidade</div>
+                    <div class="data-value">Classificação automática 1-5</div>
+                </div>
+                <div class="data-point">
+                    <div class="data-label">Pilares Críticos</div>
+                    <div class="data-value">Identificação dos 2 mais fracos</div>
+                </div>
+                <div class="data-point">
+                    <div class="data-label">Dados de Contato</div>
+                    <div class="data-value">Nome, email, telefone, empresa</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Etapa 2 -->
+        <div class="stage">
+            <span class="stage-label" style="background: #8b5cf6;">Etapa 2</span>
+            <h3>Classificação por Faixa de Maturidade</h3>
+            <div class="faixas-grid">
+                <div class="faixa-card faixa-1">
+                    <div class="faixa-number">1</div>
+                    <div class="faixa-range">0-30 Pontos</div>
+                </div>
+                <div class="faixa-card faixa-2">
+                    <div class="faixa-number">2</div>
+                    <div class="faixa-range">31-50 Pontos</div>
+                </div>
+                <div class="faixa-card faixa-3">
+                    <div class="faixa-number">3</div>
+                    <div class="faixa-range">51-85 Pontos</div>
+                </div>
+                <div class="faixa-card faixa-4">
+                    <div class="faixa-number">4</div>
+                    <div class="faixa-range">86-94 Pontos</div>
+                </div>
+                <div class="faixa-card faixa-5">
+                    <div class="faixa-number">5</div>
+                    <div class="faixa-range">95-100 Pontos</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Etapa 3 -->
+        <h2 class="section-title">Roteamento por Perfil</h2>
+        
+        <div class="decision-tree">
+            <div class="route-card route-premium">
+                <div class="route-header">
+                    <h3 class="route-title">Rota Premium</h3>
+                    <span class="route-badge badge-premium">Faturamento ≥ R$ 100k</span>
+                </div>
+                <p class="route-content">
+                    Lead qualificado para o produto principal. Direcionamento imediato para agendamento de reunião estratégica individual com CTA personalizado baseado na faixa de maturidade.
+                </p>
+                <div class="action-items">
+                    <strong>Ações Automáticas:</strong>
+                    <ul>
+                        <li><strong>Faixa 1-2:</strong> CTA "Sessão Estratégica para Sair do Caos"</li>
+                        <li><strong>Faixa 3:</strong> CTA "Sessão Exclusiva de Consolidação"</li>
+                        <li><strong>Faixa 4-5:</strong> CTA "Conversa Executiva sobre Legado"</li>
+                        <li>Sequência de follow-up de 5 emails em 10 dias</li>
+                        <li>SMS de lembrete 24h antes da reunião agendada</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="route-card route-downsell">
+                <div class="route-header">
+                    <h3 class="route-title">Rota Downsell</h3>
+                    <span class="route-badge badge-downsell">Faturamento < R$ 100k</span>
+                </div>
+                <p class="route-content">
+                    Lead direcionado para funil de nutrição e produtos acessíveis. Sequência educacional progressiva com ofertas graduais alinhadas ao momento financeiro.
+                </p>
+                <div class="action-items">
+                    <strong>Sequência Padrão:</strong>
+                    <ul>
+                        <li><strong>Email 1 (imediato):</strong> Resultado + análise personalizada</li>
+                        <li><strong>Email 2 (+2 dias):</strong> Ebook do pilar mais fraco</li>
+                        <li><strong>Email 3 (+5 dias):</strong> Vídeo educacional</li>
+                        <li><strong>Email 4 (+7 dias):</strong> Oferta de evento/workshop (R$ 97-297)</li>
+                        <li><strong>Email 5 (+10 dias):</strong> Mini mentoria ou consultoria pontual (R$ 497-997)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabela de Decisão -->
+        <h2 class="section-title">Matriz de Decisão Automática</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Perfil</th>
+                    <th>Faturamento</th>
+                    <th>Score</th>
+                    <th>Primeira Ação</th>
+                    <th>Destino</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Empresário em Caos</td>
+                    <td>≥ R$ 100k</td>
+                    <td>0-30</td>
+                    <td>Email + CTA "Sessão de Resgate"</td>
+                    <td><span class="tag tag-premium">Premium</span> <span style="font-weight: 700; color: #059669;">$$$$$</span></td>
+                </tr>
+                <tr>
+                    <td>Empresário Emergente</td>
+                    <td>≥ R$ 100k</td>
+                    <td>31-50</td>
+                    <td>Email + CTA "Consolidação"</td>
+                    <td><span class="tag tag-premium">Premium</span> <span style="font-weight: 700; color: #059669;">$$$$$</span></td>
+                </tr>
+                <tr>
+                    <td>Empresário Estruturado</td>
+                    <td>≥ R$ 100k</td>
+                    <td>51-85</td>
+                    <td>Email + CTA "Alto Desempenho"</td>
+                    <td><span class="tag tag-premium">Premium</span> <span style="font-weight: 700; color: #059669;">$$$$$</span></td>
+                </tr>
+                <tr>
+                    <td>Empresário Estratégico</td>
+                    <td>≥ R$ 100k</td>
+                    <td>86-94</td>
+                    <td>Email + CTA "Legado"</td>
+                    <td><span class="tag tag-premium">Premium</span> <span style="font-weight: 700; color: #059669;">$$$$$</span></td>
+                </tr>
+                <tr>
+                    <td>Pequeno em Caos/Emergente</td>
+                    <td>< R$ 100k</td>
+                    <td>0-50</td>
+                    <td>Email + Ebook + Evento básico</td>
+                    <td><span class="tag tag-downsell">Downsell</span> <span style="font-weight: 700; color: #d97706;">$</span> <span class="tag tag-nurture">Nutrição</span></td>
+                </tr>
+                <tr>
+                    <td>Pequeno Estruturado</td>
+                    <td>< R$ 100k</td>
+                    <td>51-85</td>
+                    <td>Email + Workshop avançado</td>
+                    <td><span class="tag tag-downsell">Downsell</span> <span style="font-weight: 700; color: #d97706;">$$ - $$$</span> <span class="tag tag-nurture">Nutrição</span></td>
+                </tr>
+                <tr>
+                    <td>Pequeno High-Performer</td>
+                    <td>< R$ 100k</td>
+                    <td>86-100</td>
+                    <td>Email + Mini mentoria de crescimento</td>
+                    <td><span class="tag tag-downsell">Downsell</span> <span style="font-weight: 700; color: #d97706;">$$$ - $$$$</span> <span class="tag tag-nurture">Nutrição</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Sistema de Valores -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin: 2rem 0;">
+            <h3 style="color: #0f172a; font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem;">Sistema de Valores por Ticket</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem;">$</div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">R$ 97 - R$ 297</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem;">$$</div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">R$ 297 - R$ 497</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem;">$$$</div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">R$ 497 - R$ 997</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">$$$$</div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">R$ 1k - R$ 3k</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;">$$$$$</div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">R$ 3k - R$ 10k+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
